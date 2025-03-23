@@ -4,6 +4,7 @@ import ImageSelect from "./ImageSelect";
 
 import { useState } from "react";
 import { PlusIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { createProduct } from "@/lib/actions/product.action";
 
 export const revalidate = 1;
 
@@ -36,10 +38,17 @@ export default function AddProduct({
   const [price, setPrice] = useState(0);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("electronics");
+  const router = useRouter();
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log({ name, category, images, description, price });
+    try {
+      const newProductId = await createProduct({ name, category, images, description, price });
+
+      router.push(`/product/view/${newProductId}`);
+    } catch (e) {
+      console.error("Error creating product", e);
+    }
   };
 
   return (
