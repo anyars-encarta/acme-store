@@ -4,9 +4,9 @@ import dbConnect from "../db";
 import Product, { IProduct } from "../models/product";
 
 export const createProduct = async (product: IProduct) => {
+    await dbConnect();
+
     try {
-        await dbConnect();
-      
         const newProduct = await Product.create(product);
       
         return newProduct._id.toString();
@@ -17,19 +17,33 @@ export const createProduct = async (product: IProduct) => {
 };
 
 export const getProducts = async () => {
-  await dbConnect();
-
-  const products = await Product.find({});
-
-  return products;
+    try {
+        await dbConnect();
+      
+        const products = await Product.find({});
+      
+        return products;
+    } catch (e) {
+        console.error("Error getting product", e);
+        throw new EvalError("Error getting product");
+    }
 };
 
 export const getSingleProduct = async (id: string) => {
-  await dbConnect();
+    await dbConnect();
 
-  const product = await Product.findById(id);
+    try {
+        const product = await Product.findById(id);
+      
+        if(!product) {
+            return null
+        };
 
-  return product;
+        return product;
+    } catch (e) {
+        console.error("Error getting single product", e);
+        return null
+    }
 };
 
 export const updateProduct = async (id: string) => {
