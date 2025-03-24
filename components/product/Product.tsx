@@ -1,11 +1,8 @@
 import Stars from "@/components/product/Stars";
 import ImageDisplay from "@/components/product/ImageDisplay";
-import { getSingleProduct } from "@/lib/actions/product.action";
 import { IProduct } from "@/lib/models/product";
 
 export default function Product({product}: {product: IProduct}) {
-  // const {name, price, description, category, images} = await getSingleProduct(params.id);
-
   return (
     <div className="grid gap-6">
       <ImageDisplay images={product.images} />
