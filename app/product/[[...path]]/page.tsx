@@ -4,6 +4,7 @@ import Review from "@/components/product/Review";
 import AddProduct from "@/components/product/AddProduct";
 import DeleteProduct from "@/components/delete/DeleteProduct";
 import { getSingleProduct } from "@/lib/actions/product.action";
+import { getReviewsAndRating } from "@/lib/actions/review.action";
 
 export const revalidate = 1;
 
@@ -12,6 +13,7 @@ export default async function Page({ params }: { params: { path: string[] } }) {
   const id = params.path[1];
 
   const product = await getSingleProduct(id);
+  const { reviews, averageRating } = await getReviewsAndRating(id);
 
   if (!product) {
     return <div>Product not found</div>
@@ -29,14 +31,13 @@ export default async function Page({ params }: { params: { path: string[] } }) {
 
   return (
     <div className="pt-20 grid md:grid-cols-2 gap-8 max-w-6xl mx-auto py-12 px-4">
-      <Product product={product} />
+      <Product product={product} rating={averageRating} />
       <div className="flex flex-col gap-y-5">
         <span className="text-2xl font-bold h-fit">Customer Reviews</span>
         <div className="grid gap-5">
-          <Review />
-          <Review />
-          <Review />
-          <Review />
+          {reviews.map((review, i) => (
+            <Review key={i} review={review} />
+          ))}
         </div>
       </div>
       <div className="md:col-span-2">
