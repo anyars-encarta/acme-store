@@ -5,6 +5,21 @@ import Review from "../models/review";
 
 // import mongoose from "mongoose";
 
+export const createReview = async (name: string, rating: number, review: string) => {
+  try {
+    await dbConnect();
+
+    const createdReview = await Review.create({
+      name, rating, review
+    });
+
+    return createdReview;
+  } catch (e) {
+    console.error("Error creating review", e);
+    throw new EvalError("Error creating review");
+  }
+};
+
 export const getReviewsAndRating = async (productId: string) => {
   try {
     await dbConnect();
