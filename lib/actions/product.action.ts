@@ -48,7 +48,7 @@ export const getSingleProduct = async (id: string) => {
 
 export const updateProduct = async (id: string, data: Partial<IProduct>) => {
     await dbConnect();
-    
+
     try {
         const updatedProduct = await Product.findByIdAndUpdate(id, data, { new: true });
       
@@ -59,10 +59,14 @@ export const updateProduct = async (id: string, data: Partial<IProduct>) => {
     }
 };
 
-export const deleteProduct = async (id: string) => {
-  await dbConnect();
+export const deleteProduct = async (id: string): Promise<boolean> => {
+    await dbConnect();
+    try {
+        const result = await Product.deleteOne({ _id: id });
 
-  const deletedProduct = await Product.deleteOne({ _id: id });
-
-  return deletedProduct;
+        return result.deletedCount === 1;
+    } catch (e) {
+        console.error("Error deleting product", e);
+        throw new Error("Error deleting product");
+    }
 };
