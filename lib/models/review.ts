@@ -5,7 +5,7 @@ const AuthorSchema = new Schema({
     email: { type: String, required: true},
 });
 
-interface IReview {
+export interface IReview {
     author: {
         name: string;
         email: string;

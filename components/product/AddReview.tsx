@@ -4,16 +4,24 @@ import RatingSelect from "./Review/RatingSelect";
 
 import { useState } from "react";
 
+import { createReview } from "@/lib/actions/review.action";
+
 export default function Component() {
   const [rating, setRating] = useState(0);
   const [name, setName] = useState("");
   const [review, setReview] = useState("");
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    console.log({ name, rating, review });
+    try {
+      await createReview(name, rating, review);
+
+    } catch (e) {
+      console.error("Error creating review", e);
+    }
   };
+
   return (
     <section className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md">
       <div className="max-w-2xl mx-auto">
