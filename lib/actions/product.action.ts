@@ -3,7 +3,7 @@
 import dbConnect from "../db";
 import Product, { IProduct } from "../models/product";
 
-import { unstable_cache as cache } from "next/cache";
+import { unstable_cache as cache, revalidateTag } from "next/cache";
 
 export const createProduct = async (product: IProduct) => {
   await dbConnect();
@@ -50,6 +50,7 @@ const _getSingleProduct = async (id: string) => {
 
 export const getSingleProduct = cache(_getSingleProduct, ["getSingleProduct"], {
   tags: ["Product"],
+  revalidate: 60,
 });
 
 export const updateProduct = async (id: string, data: Partial<IProduct>) => {
@@ -59,6 +60,8 @@ export const updateProduct = async (id: string, data: Partial<IProduct>) => {
     const updatedProduct = await Product.findByIdAndUpdate(id, data, {
       new: true,
     });
+
+    revalidateTag("Product");
 
     return updatedProduct._id.toString();
   } catch (e) {
@@ -71,6 +74,8 @@ export const deleteProduct = async (id: string): Promise<boolean> => {
   await dbConnect();
   try {
     const result = await Product.deleteOne({ _id: id });
+
+    revalidateTag("Product");
 
     return result.deletedCount === 1;
   } catch (e) {
