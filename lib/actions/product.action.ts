@@ -46,12 +46,17 @@ export const getSingleProduct = async (id: string) => {
     }
 };
 
-export const updateProduct = async (id: string) => {
-  await dbConnect();
-
-  const updatedProduct = await Product.updateOne({ _id: id });
-
-  return updatedProduct;
+export const updateProduct = async (id: string, data: Partial<IProduct>) => {
+    await dbConnect();
+    
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(id, data, { new: true });
+      
+        return updatedProduct._id.toString();
+    } catch (e) {
+        console.error("Error updating product", e);
+        throw new Error("Error updating product");
+    }
 };
 
 export const deleteProduct = async (id: string) => {

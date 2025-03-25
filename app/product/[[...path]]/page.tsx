@@ -18,16 +18,17 @@ export default async function Page({ params }: { params: { path: string[] } }) {
   if (!product) {
     return <div>Product not found</div>
   };
-
+  
   if (method === "new") {
     return <AddProduct />;
   }
   if (method === "edit") {
-    return <AddProduct edit id={id} />;
+    return <AddProduct edit id={id} product={product} />;
   }
   if (method === "delete") {
     return <DeleteProduct id={id} />;
   }
+
 
   return (
     <div className="pt-20 grid md:grid-cols-2 gap-8 max-w-6xl mx-auto py-12 px-4">

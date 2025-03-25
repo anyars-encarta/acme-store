@@ -2,7 +2,7 @@
 
 import ImageSelect from "./ImageSelect";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -17,35 +17,56 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { createProduct } from "@/lib/actions/product.action";
+import { createProduct, updateProduct } from "@/lib/actions/product.action";
+import { IProduct } from "@/lib/models/product";
 
 export const revalidate = 1;
 
 export default function AddProduct({
   edit,
   id,
+  product,
 }: {
   edit?: boolean;
   id?: string;
+  product?: IProduct;
 }) {
   const title = edit ? "Edit Product " + id : "Add Product";
   const subText = edit
     ? "Update the details of your product here."
     : "Add a new product to your store.";
 
-  const [images, setImages] = useState<string[]>([]);
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState(0);
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("electronics");
+  const [images, setImages] = useState<string[]>(product?.images || []);
+  const [name, setName] = useState(product?.name || "");
+  const [price, setPrice] = useState(product?.price || 0);
+  const [description, setDescription] = useState(product?.description || "");
+  const [category, setCategory] = useState(product?.category || "");
   const router = useRouter();
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const newProductId = await createProduct({ name, category, images, description, price });
+      if (edit && product && id) {
+        const productID = await updateProduct(id, {
+          name,
+          price,
+          description,
+          category,
+          images,
+        });
 
-      router.push(`/product/view/${newProductId}`);
+        router.push(`/product/view/${productID}`);
+      } else {
+        const newProductId = await createProduct({
+          name,
+          category,
+          images,
+          description,
+          price,
+        });
+
+        router.push(`/product/view/${newProductId}`);
+      }
     } catch (e) {
       console.error("Error creating product", e);
     }

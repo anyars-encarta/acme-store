@@ -45,3 +45,16 @@ export const getReviewsAndRating = async (productId: string) => {
     throw new EvalError("Error getting reviews");
   }
 };
+
+export const updateReview = async (productId: string) => {
+  try {
+    await dbConnect();
+
+    const updatedReview = await Review.updateOne({productId});
+
+    return updatedReview;
+  } catch (e) {
+    console.error("Error updating review", e)
+    throw new Error("Error upodating review")
+  }
+}
