@@ -1,19 +1,16 @@
 "use server";
 
 import dbConnect from "../db";
-import Review from "../models/review";
+import Review, { IReview } from "../models/review";
 
 // import mongoose from "mongoose";
 
-export const createReview = async (name: string, rating: number, review: string) => {
+export const createReview = async (review: IReview) => {
+  await dbConnect();
   try {
-    await dbConnect();
+    const newReview = await Review.create(review);
 
-    const createdReview = await Review.create({
-      name, rating, review
-    });
-
-    return createdReview;
+    return newReview._id.toString();
   } catch (e) {
     console.error("Error creating review", e);
     throw new EvalError("Error creating review");

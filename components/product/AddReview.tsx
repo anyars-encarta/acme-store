@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { createReview } from "@/lib/actions/review.action";
 
-export default function Component() {
+export default function Component({ id }: { id: string }) {
   const [rating, setRating] = useState(0);
   const [name, setName] = useState("");
   const [review, setReview] = useState("");
@@ -15,8 +15,19 @@ export default function Component() {
     event.preventDefault();
 
     try {
-      await createReview(name, rating, review);
+      const newReview = {
+        author: {
+          name: name,
+          email: "example@email.com",
+        },
+        rating,
+        content: review,
+        productId: id,
+      };
 
+      const reviewId = await createReview(newReview);
+
+      console.log("Review created with ID:", reviewId);
     } catch (e) {
       console.error("Error creating review", e);
     }
