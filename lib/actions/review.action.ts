@@ -3,12 +3,16 @@
 import dbConnect from "../db";
 import Review, { IReview } from "../models/review";
 
+import { unstable_cache as cache, revalidateTag } from "next/cache";
+
 // import mongoose from "mongoose";
 
 export const createReview = async (review: IReview) => {
   await dbConnect();
   try {
     const newReview = await Review.create(review);
+
+    revalidateTag("getReviewsAndRating");
 
     return newReview._id.toString();
   } catch (e) {
@@ -17,7 +21,7 @@ export const createReview = async (review: IReview) => {
   }
 };
 
-export const getReviewsAndRating = async (productId: string) => {
+const _getReviewsAndRating = async (productId: string) => {
   try {
     await dbConnect();
 
@@ -29,12 +33,6 @@ export const getReviewsAndRating = async (productId: string) => {
     });
 
     const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
-    // const averageRatingResult = await Review.aggregate([
-    //   { $match: { productId: new mongoose.Types.ObjectId(productId) } },
-    //   { $group: { _id: null, average: { $avg: "$rating" } } },
-    // ]);
-
-    // const averageRating = averageRatingResult[0]?.average || 0;
 
     return { reviews, averageRating };
   } catch (e) {
@@ -43,15 +41,22 @@ export const getReviewsAndRating = async (productId: string) => {
   }
 };
 
+export const getReviewsAndRating = cache(_getReviewsAndRating, ["getReviewsAndRating"], {
+  tags: ["getReviewsAndRating"],
+  revalidate: 60,
+});
+
 export const updateReview = async (productId: string) => {
   try {
     await dbConnect();
 
-    const updatedReview = await Review.updateOne({productId});
+    const updatedReview = await Review.updateOne({ productId });
+
+    revalidateTag("getReviewsAndRating");
 
     return updatedReview;
   } catch (e) {
-    console.error("Error updating review", e)
-    throw new Error("Error upodating review")
+    console.error("Error updating review", e);
+    throw new Error("Error upodating review");
   }
-}
+};

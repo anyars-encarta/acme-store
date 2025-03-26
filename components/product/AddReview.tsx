@@ -10,6 +10,7 @@ export default function Component({ id }: { id: string }) {
   const [rating, setRating] = useState(0);
   const [name, setName] = useState("");
   const [review, setReview] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -18,7 +19,7 @@ export default function Component({ id }: { id: string }) {
       const newReview = {
         author: {
           name: name,
-          email: "example@email.com",
+          email: email,
         },
         rating,
         content: review,
@@ -48,10 +49,25 @@ export default function Component({ id }: { id: string }) {
             <input
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-950 dark:border-gray-700 dark:text-gray-300"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-950 dark:border-gray-700 dark:text-gray-300 mb-4"
               id="name"
               placeholder="Enter your name"
               type="text"
+            />
+
+            <label
+              className="block font-medium text-gray-700 dark:text-gray-300"
+              htmlFor="email"
+            >
+              Email
+            </label>
+            <input
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-950 dark:border-gray-700 dark:text-gray-300"
+              id="email"
+              placeholder="yourmail@example.com"
+              type="email"
             />
           </div>
           <div>
