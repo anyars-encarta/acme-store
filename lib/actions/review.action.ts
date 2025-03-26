@@ -1,26 +1,27 @@
 "use server";
 
 import dbConnect from "../db";
-import Review from "../models/review";
+import Review, { IReview } from "../models/review";
+
+import { unstable_cache as cache, revalidateTag } from "next/cache";
 
 // import mongoose from "mongoose";
 
-export const createReview = async (name: string, rating: number, review: string) => {
+export const createReview = async (review: IReview) => {
+  await dbConnect();
   try {
-    await dbConnect();
+    const newReview = await Review.create(review);
 
-    const createdReview = await Review.create({
-      name, rating, review
-    });
+    revalidateTag("getReviewsAndRating");
 
-    return createdReview;
+    return newReview._id.toString();
   } catch (e) {
     console.error("Error creating review", e);
     throw new EvalError("Error creating review");
   }
 };
 
-export const getReviewsAndRating = async (productId: string) => {
+const _getReviewsAndRating = async (productId: string) => {
   try {
     await dbConnect();
 
@@ -32,12 +33,6 @@ export const getReviewsAndRating = async (productId: string) => {
     });
 
     const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
-    // const averageRatingResult = await Review.aggregate([
-    //   { $match: { productId: new mongoose.Types.ObjectId(productId) } },
-    //   { $group: { _id: null, average: { $avg: "$rating" } } },
-    // ]);
-
-    // const averageRating = averageRatingResult[0]?.average || 0;
 
     return { reviews, averageRating };
   } catch (e) {
@@ -46,15 +41,22 @@ export const getReviewsAndRating = async (productId: string) => {
   }
 };
 
+export const getReviewsAndRating = cache(_getReviewsAndRating, ["getReviewsAndRating"], {
+  tags: ["getReviewsAndRating"],
+  revalidate: 60,
+});
+
 export const updateReview = async (productId: string) => {
   try {
     await dbConnect();
 
-    const updatedReview = await Review.updateOne({productId});
+    const updatedReview = await Review.updateOne({ productId });
+
+    revalidateTag("getReviewsAndRating");
 
     return updatedReview;
   } catch (e) {
-    console.error("Error updating review", e)
-    throw new Error("Error upodating review")
+    console.error("Error updating review", e);
+    throw new Error("Error upodating review");
   }
-}
+};

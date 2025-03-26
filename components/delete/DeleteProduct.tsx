@@ -1,5 +1,7 @@
+"use client";
+
 import { TrashIcon } from "lucide-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { deleteProduct } from "@/lib/actions/product.action";
