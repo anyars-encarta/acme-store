@@ -19,10 +19,27 @@ export const createProduct = async (product: IProduct) => {
 };
 
 export const getProducts = async () => {
+  await dbConnect();
   try {
-    await dbConnect();
+    const products = await Product.aggregate([
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "_id",
+          foreignField: "productId",
+          as: "reviews",
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          image: { $first: "$images" },
+          averageRating: { $avg: '$reviews.rating'}
+        }
+      }
+    ]);
 
-    const products = await Product.find({});
+    revalidateTag("Product");
 
     return products;
   } catch (e) {
