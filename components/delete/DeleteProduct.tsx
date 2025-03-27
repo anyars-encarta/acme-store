@@ -2,6 +2,7 @@
 
 import { TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 import { Button } from "@/components/ui/button";
 import { deleteProduct } from "@/lib/actions/product.action";
@@ -10,7 +11,7 @@ export default function DeleteProduct({ id }: { id: string }) {
 
   const handleDelete = async () => {
     const deleted = await deleteProduct(id);
-    if (deleted) router.push("/search")
+    if (deleted) router.push("/search");
   };
 
   return (
@@ -32,7 +33,12 @@ export default function DeleteProduct({ id }: { id: string }) {
           <Button onClick={handleDelete} variant="destructive">
             Confirm Delete
           </Button>
-          <Button onClick={() => router.push(`/product/view/${id}`)} variant="outline">Cancel</Button>
+          <Button
+            onClick={() => router.push(`/product/view/${id}`)}
+            variant="outline"
+          >
+            Cancel
+          </Button>
         </div>
       </div>
     </div>

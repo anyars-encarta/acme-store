@@ -7,7 +7,7 @@ export default function ProductResult({ product }: { product: any }) {
     <div className="bg-white rounded-lg shadow-sm dark:bg-gray-950 overflow-hidden">
       <Link className="block" href={`/product/view/${product.id}`}>
         <img
-          src="https://dummyimage.com/600x520/000/fff"
+          src={product.images[0]}
           alt="product"
           className="w-full h-full object-cover"
         />
