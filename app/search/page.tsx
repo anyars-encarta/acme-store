@@ -2,7 +2,14 @@ import ProductResult from "@/components/search/ProductResult";
 import SearchFilters from "@/components/search/SearchFilters";
 import { getProducts } from "@/lib/actions/product.action";
 
-export default async function Component() {
+interface SearchParams {
+  name: string;
+  category: string;
+  minPrice: string;
+  page: string;
+}
+
+export default async function Component({searchParams}: {searchParams: SearchParams}) {
   // const products = [
   //   {
   //     id: 1,
@@ -35,9 +42,17 @@ export default async function Component() {
   //     rating: 4.3,
   //   },
   // ];
-  const products = await getProducts();
+  console.log("The search params:", searchParams)
+  const page = parseInt(searchParams.page) || 1;
+  const minPrice = parseInt(searchParams.minPrice) || 0;
+  const name = searchParams.name || ""; 
+  const category = searchParams.category || "";
 
-  console.log("Products with reviews: ", products);
+console.log("Min Price:", minPrice);
+
+  const products = await getProducts(page, name, minPrice, category);
+
+  console.log("Products:", products);
   return (
     <div className="grid md:grid-cols-[300px_1fr] gap-8 px-4 md:px-8 py-20">
       <div className="bg-white rounded-lg shadow-sm dark:bg-gray-950 p-6 space-y-6">

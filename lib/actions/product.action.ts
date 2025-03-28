@@ -18,8 +18,17 @@ export const createProduct = async (product: IProduct) => {
   }
 };
 
-export const getProducts = async () => {
+export const getProducts = async (
+  page: number,
+  search: string,
+  minPrice: number,
+  category: string
+) => {
   await dbConnect();
+
+  const limit = 5;
+  const skip = (page - 1) * limit;
+
   try {
     const products = await Product.aggregate([
       {
@@ -28,15 +37,34 @@ export const getProducts = async () => {
           localField: "_id",
           foreignField: "productId",
           as: "reviews",
-        }
+        },
       },
       {
         $project: {
           name: 1,
+          price: 1,
           image: { $first: "$images" },
-          averageRating: { $avg: '$reviews.rating'}
-        }
-      }
+          averageRating: { $avg: "$reviews.rating" },
+        },
+      },
+      {
+        $match: {
+          name: {
+            $regex: search,
+            $options: "i",
+          },
+          price: {
+            $gte: minPrice,
+          },
+          ...(category && { category: category }),
+        },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
     ]);
 
     revalidateTag("Product");
