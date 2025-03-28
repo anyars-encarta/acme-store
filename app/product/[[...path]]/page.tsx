@@ -10,7 +10,12 @@ export const revalidate = 1;
 
 export default async function Page({ params }: { params: { path: string[] } }) {
   const method = params.path[0];
+
   const id = params.path[1];
+
+  if (method === "new") {
+    return <AddProduct />;
+  }
 
   const product = await getSingleProduct(id);
   const { reviews, averageRating } = await getReviewsAndRating(id);
@@ -18,10 +23,7 @@ export default async function Page({ params }: { params: { path: string[] } }) {
   if (!product) {
     return <div>Product not found</div>
   };
-  
-  if (method === "new") {
-    return <AddProduct />;
-  }
+
   if (method === "edit") {
     return <AddProduct edit id={id} product={product} />;
   }

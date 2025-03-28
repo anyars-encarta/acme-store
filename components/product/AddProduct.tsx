@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { createProduct, updateProduct } from "@/lib/actions/product.action";
 import { IProduct } from "@/lib/models/product";
+import { toast } from "@/hooks/use-toast";
 
 export const revalidate = 1;
 
@@ -65,9 +66,20 @@ export default function AddProduct({
           price,
         });
 
+        toast({
+          title: "Product created",
+          description: "New Product has been created successfully",
+        });
+
         router.push(`/product/view/${newProductId}`);
       }
     } catch (e) {
+      toast({
+        title: "Error creating product",
+        description: "There was an error creating a product",
+        variant: "destructive",
+      });
+      
       console.error("Error creating product", e);
     }
   };

@@ -5,6 +5,7 @@ import RatingSelect from "./Review/RatingSelect";
 import { useState } from "react";
 
 import { createReview } from "@/lib/actions/review.action";
+import { toast } from "@/hooks/use-toast";
 
 export default function Component({ id }: { id: string }) {
   const [rating, setRating] = useState(0);
@@ -28,8 +29,19 @@ export default function Component({ id }: { id: string }) {
 
       const reviewId = await createReview(newReview);
 
+      toast({
+        title: "Review added",
+        description: "Review has been added successfully",
+      });
+
       console.log("Review created with ID:", reviewId);
     } catch (e) {
+      toast({
+        title: "Error Adding Review",
+        description: "There was an error adding a review",
+        variant: "destructive",
+      });
+
       console.error("Error creating review", e);
     }
   };
