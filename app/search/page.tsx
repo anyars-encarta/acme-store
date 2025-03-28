@@ -42,17 +42,13 @@ export default async function Component({searchParams}: {searchParams: SearchPar
   //     rating: 4.3,
   //   },
   // ];
-  console.log("The search params:", searchParams)
   const page = parseInt(searchParams.page) || 1;
   const minPrice = parseInt(searchParams.minPrice) || 0;
   const name = searchParams.name || ""; 
   const category = searchParams.category || "";
 
-console.log("Min Price:", minPrice);
-
   const products = await getProducts(page, name, minPrice, category);
 
-  console.log("Products:", products);
   return (
     <div className="grid md:grid-cols-[300px_1fr] gap-8 px-4 md:px-8 py-20">
       <div className="bg-white rounded-lg shadow-sm dark:bg-gray-950 p-6 space-y-6">

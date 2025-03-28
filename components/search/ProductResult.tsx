@@ -3,7 +3,6 @@ import Link from "next/link";
 import Stars from "@/components/product/Stars";
 
 export default function ProductResult({ product }: { product: any }) {
-  console.log(product)
   return (
     <div className="bg-white rounded-lg shadow-sm dark:bg-gray-950 overflow-hidden">
       <Link className="block" href={`/product/view/${product._id}`}>
